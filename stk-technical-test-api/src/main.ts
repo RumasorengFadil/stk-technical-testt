@@ -1,0 +1,40 @@
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
+import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // buang field yang tidak ada di DTO
+      forbidNonWhitelisted: true, // throw error kalau ada field ekstra
+      transform: true, // otomatis ubah body ke class DTO
+    }),
+  );
+
+  app.enableCors({
+    origin: ['http://localhost:3000', 'http://localhost:8000'],
+    methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+    credentials: true, // jika kamu pakai cookie/token
+  });
+
+  const config = new DocumentBuilder()
+    .setTitle('Course API')
+    .setDescription('API CRUD For Menus')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  await app.listen(process.env.APP_PORT ?? 3000);
+}
+bootstrap();
