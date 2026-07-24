@@ -145,10 +145,18 @@ cp .env.example .env
 
 Configure your database credentials inside `.env`.
 
-Run database migrations
+Create a new database in MySQL (or any compatible database server) using the same database name specified in the `.env` file.
+
+Example:
+
+```sql
+CREATE DATABASE your_database_name;
+```
+
+After the database has been created, seed the initial data by running:
 
 ```bash
-npm run migration:run
+npm run seed
 ```
 
 Start development server
@@ -160,7 +168,7 @@ npm run start:dev
 Backend will run on
 
 ```
-http://localhost:3001
+http://localhost:8000
 ```
 
 ---
@@ -188,7 +196,7 @@ cp .env.example .env.local
 Example
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 Run development server
@@ -228,7 +236,7 @@ npm start
 Backend
 
 ```env
-PORT=3001
+PORT=8000
 
 DB_HOST=
 DB_PORT=
@@ -240,7 +248,7 @@ DB_DATABASE=
 Frontend
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
 ---
